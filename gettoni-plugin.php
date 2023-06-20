@@ -36,7 +36,23 @@ function gettoni_plugin_activate() {
 
     require_once( ABSPATH . 'wp-admin/includes/upgrade.php' );
     dbDelta( $sql );
+
+    // Creazione della tabella per i lavori presi dagli utenti nel database
+    $table_name_jobs = $wpdb->prefix . 'gettoni_lavori_presi';
+
+    $sql_jobs = "CREATE TABLE $table_name_jobs (
+        id mediumint(9) NOT NULL AUTO_INCREMENT,
+        user_id int(11) NOT NULL,
+        voce_id int(11) NOT NULL,
+        count int(11) NOT NULL DEFAULT 0,
+        PRIMARY KEY  (id),
+        KEY user_id (user_id),
+        KEY voce_id (voce_id)
+    ) $charset_collate;";
+
+    dbDelta($sql_jobs);
 }
+
 
 // Azione alla disattivazione del plugin
 register_deactivation_hook( __FILE__, 'gettoni_plugin_deactivate' );
@@ -56,18 +72,29 @@ function gettoni_plugin_deactivate() {
 // Funzione per creare il menu nel backend
 add_action( 'admin_menu', 'gettoni_plugin_add_menu' );
 function gettoni_plugin_add_menu() {
+    $main_menu_slug = 'gettoni-plugin-menu';
+
     add_menu_page(
         'Gettoni', // Titolo della voce di menu
         'Gettoni', // Etichetta del menu
         'manage_options',
-        'gettoni-plugin-menu', // Slug del menu
+        $main_menu_slug, // Slug del menu principale
         'gettoni_plugin_dashboard_page', // Callback per la pagina
         'dashicons-money-alt', // Icona del menu (puoi scegliere un'icona da https://developer.wordpress.org/resource/dashicons/)
         2 // Posizione del menu nel menu di amministrazione
     );
 
     add_submenu_page(
-        'gettoni-plugin-menu', // Slug del menu padre
+        $main_menu_slug, // Slug del menu principale
+        'Dashboard', // Titolo della sottovoce
+        'Dashboard', // Etichetta della sottovoce
+        'manage_options',
+        $main_menu_slug, // Slug della sottovoce (lo stesso del menu principale)
+        'gettoni_plugin_dashboard_page' // Callback per la pagina
+    );
+
+    add_submenu_page(
+        $main_menu_slug, // Slug del menu principale
         'Aggiungi Gettoni', // Titolo della sottovoce
         'Aggiungi Gettoni', // Etichetta della sottovoce
         'manage_options',
@@ -76,20 +103,21 @@ function gettoni_plugin_add_menu() {
     );
 
     add_submenu_page(
-        'gettoni-plugin-menu', // Slug del menu padre
+        $main_menu_slug, // Slug del menu principale
         'Voci', // Titolo della sottovoce
         'Voci', // Etichetta della sottovoce
         'manage_options',
         'gettoni-plugin-voci', // Slug della sottovoce
         'gettoni_plugin_voci_page' // Callback per la pagina
     );
-
 }
+
 
 // Callback per la pagina di dashboard
 function gettoni_plugin_dashboard_page() {
     global $wpdb;
-    $table_name = $wpdb->prefix . 'gettoni_voci';
+    $table_name_jobs = $wpdb->prefix . 'gettoni_lavori_presi';
+    $table_name_voci = $wpdb->prefix . 'gettoni_voci';
 
     $users = get_users();
 
@@ -115,26 +143,35 @@ function gettoni_plugin_dashboard_page() {
 
     echo '<h2>Lavori Presi</h2>';
     echo '<table class="wp-list-table widefat fixed striped">';
-    echo '<thead><tr><th>Nome Utente</th><th>Lavoro</th><th>Quantità</th></tr></thead>';
+    echo '<thead><tr><th>Nome Utente</th><th>Lavoro</th><th>Referenza</th><th>Quantità Presa</th></tr></thead>';
     echo '<tbody>';
 
     foreach ($users as $user) {
         $user_id = $user->ID;
 
-        $taken_jobs = $wpdb->get_results($wpdb->prepare("SELECT * FROM $table_name WHERE user_id = %d", $user_id));
+        $taken_jobs = $wpdb->get_results(
+            $wpdb->prepare(
+                "SELECT voci.lavoro, voci.referenza, jobs.count
+                FROM $table_name_jobs AS jobs
+                INNER JOIN $table_name_voci AS voci ON jobs.voce_id = voci.id 
+                WHERE jobs.user_id = %d",
+                $user_id
+            )
+        );
 
         if ($taken_jobs) {
             foreach ($taken_jobs as $job) {
                 echo '<tr>';
                 echo '<td>' . $user->user_login . '</td>';
                 echo '<td>' . $job->lavoro . '</td>';
+                echo '<td>' . $job->referenza . '</td>';
                 echo '<td>' . $job->count . '</td>';
                 echo '</tr>';
             }
         } else {
             echo '<tr>';
             echo '<td>' . $user->user_login . '</td>';
-            echo '<td colspan="2">Nessun lavoro preso</td>';
+            echo '<td colspan="3">Nessun lavoro preso</td>';
             echo '</tr>';
         }
     }
@@ -143,6 +180,8 @@ function gettoni_plugin_dashboard_page() {
     echo '</table>';
     echo '</div>';
 }
+
+
 
 // Callback per la pagina "Aggiungi Gettoni"
 function gettoni_plugin_add_gettoni_page() {
@@ -320,9 +359,11 @@ function gettoni_plugin_voci_page() {
 }
 
 // Callback per la pagina dei lavori presi
-function gettoni_plugin_lavori_presi_page() {
+function gettoni_plugin_lavori_presi_page()
+{
     global $wpdb;
-    $table_name = $wpdb->prefix . 'gettoni_voci';
+    $table_name_jobs = $wpdb->prefix . 'gettoni_lavori_presi';
+    $table_name_voci = $wpdb->prefix . 'gettoni_voci';
 
     $users = get_users();
 
@@ -335,7 +376,15 @@ function gettoni_plugin_lavori_presi_page() {
     foreach ($users as $user) {
         $user_id = $user->ID;
 
-        $taken_jobs = $wpdb->get_results($wpdb->prepare("SELECT * FROM $table_name WHERE user_id = %d", $user_id));
+        $taken_jobs = $wpdb->get_results(
+            $wpdb->prepare(
+                "SELECT jobs.*, voci.lavoro 
+                FROM $table_name_jobs AS jobs 
+                INNER JOIN $table_name_voci AS voci ON jobs.voce_id = voci.id 
+                WHERE jobs.user_id = %d",
+                $user_id
+            )
+        );
 
         if ($taken_jobs) {
             foreach ($taken_jobs as $job) {
@@ -357,6 +406,7 @@ function gettoni_plugin_lavori_presi_page() {
     echo '</table>';
     echo '</div>';
 }
+
 
 // Funzione per generare l'output dello shortcode
 function gettoni_plugin_voci_shortcode() {
@@ -403,57 +453,89 @@ add_shortcode('gettoni_voci', 'gettoni_plugin_voci_shortcode');
 
 // Azione per il prendi lavoro
 add_action('init', 'gettoni_plugin_prende_lavoro');
-function gettoni_plugin_prende_lavoro() {
+function gettoni_plugin_prende_lavoro()
+{
     if (isset($_POST['prendi_lavoro'])) {
         global $wpdb;
-        $table_name = $wpdb->prefix . 'gettoni_voci';
+        $table_name_jobs = $wpdb->prefix . 'gettoni_lavori_presi';
+        $table_name_voci = $wpdb->prefix . 'gettoni_voci';
         $voce_id = intval($_POST['voce_id']);
 
         // Verifica se l'utente ha abbastanza gettoni e se la quantità è maggiore di 0
         $current_user_id = get_current_user_id();
         $user_gettone = get_user_meta($current_user_id, 'gettone', true);
 
-        $voce = $wpdb->get_row($wpdb->prepare("SELECT * FROM $table_name WHERE id = %d", $voce_id));
+        $voce = $wpdb->get_row($wpdb->prepare("SELECT * FROM $table_name_voci WHERE id = %d", $voce_id));
         $voce_quantita = $voce->quantita;
         $voce_quantita = $voce->quantita;
-        $voce_user_id = $voce->user_id;
 
         if ($user_gettone > 0 && $voce_quantita > 0 && $voce_quantita > 0) {
-            // Aggiorna il numero di gettoni dell'utente
-            $new_user_gettone = $user_gettone - 1;
-            update_user_meta($current_user_id, 'gettone', $new_user_gettone);
+            // Inizia una transazione per garantire l'integrità dei dati
+            $wpdb->query('START TRANSACTION');
 
-            // Aggiorna la quantità disponibile del lavoro
-            $new_voce_quantita = $voce_quantita - 1;
-            $wpdb->update(
-                $table_name,
-                array('quantita' => $new_voce_quantita),
-                array('id' => $voce_id),
-                array('%d'),
-                array('%d')
-            );
+            try {
+                // Aggiorna il numero di gettoni dell'utente
+                $new_user_gettone = $user_gettone - 1;
+                update_user_meta($current_user_id, 'gettone', $new_user_gettone);
 
-            // Verifica se il lavoro ha già un possessore
-            if ($voce_user_id == 0) {
-                // Se il lavoro non ha un possessore, assegna l'ID dell'utente corrente al lavoro
+                // Aggiorna la quantità disponibile del lavoro
+                $new_voce_quantita = $voce_quantita - 1;
                 $wpdb->update(
-                    $table_name,
-                    array('user_id' => $current_user_id),
+                    $table_name_voci,
+                    array('quantita' => $new_voce_quantita),
                     array('id' => $voce_id),
                     array('%d'),
                     array('%d')
                 );
+
+                // Verifica se il lavoro è già stato preso dall'utente corrente
+                $existing_job = $wpdb->get_row(
+                    $wpdb->prepare(
+                        "SELECT * FROM $table_name_jobs WHERE user_id = %d AND voce_id = %d",
+                        $current_user_id,
+                        $voce_id
+                    )
+                );
+
+                if ($existing_job) {
+                    // Se il lavoro è già stato preso, incrementa il conteggio
+                    $new_job_count = $existing_job->count + 1;
+                    $wpdb->update(
+                        $table_name_jobs,
+                        array('count' => $new_job_count),
+                        array('id' => $existing_job->id),
+                        array('%d'),
+                        array('%d')
+                    );
+                } else {
+                    // Se il lavoro non è ancora stato preso, inserisci una nuova riga
+                    $wpdb->insert(
+                        $table_name_jobs,
+                        array(
+                            'user_id' => $current_user_id,
+                            'voce_id' => $voce_id,
+                            'count' => 1,
+                        ),
+                        array('%d', '%d', '%d')
+                    );
+                }
+
+                // Conferma la transazione
+                $wpdb->query('COMMIT');
+
+                // Esegui altre operazioni desiderate
+                // ...
+
+                // Redirect o messaggio di successo
+                wp_redirect(home_url());
+                exit;
+            } catch (Exception $e) {
+                // Annulla la transazione in caso di errore
+                $wpdb->query('ROLLBACK');
+
+                // Gestisci l'errore
+                wp_die('Si è verificato un errore durante la transazione.');
             }
-
-            // Incrementa il conteggio per il lavoro
-            $wpdb->query($wpdb->prepare("UPDATE $table_name SET count = count + 1 WHERE id = %d", $voce_id));
-
-            // Esegui altre operazioni desiderate
-            // ...
-
-            // Redirect o messaggio di successo
-            wp_redirect(home_url());
-            exit;
         } else {
             // Messaggio di errore
             wp_die('Non hai abbastanza gettoni o la quantità del lavoro è esaurita.');
