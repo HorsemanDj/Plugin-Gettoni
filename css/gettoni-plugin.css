@@ -1,0 +1,73 @@
+/* Stili per la tabella delle voci */
+.gettoni-voci-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-bottom: 20px;
+}
+
+.gettoni-voci-table th,
+.gettoni-voci-table td {
+  padding: 10px;
+  text-align: left;
+  border: 1px solid #ccc;
+}
+
+.gettoni-voci-table th {
+  background-color: #f2f2f2;
+  color: #000;
+}
+
+/* Stili per la tabella del saldo punti */
+.saldo-punti-table {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  width: 200px; /* Modifica la larghezza della tabella come preferisci */
+  border-collapse: collapse;
+}
+
+.saldo-punti-table th,
+.saldo-punti-table td {
+  padding: 10px;
+  text-align: left;
+  border: 1px solid #ccc;
+}
+
+.saldo-punti-table th {
+  background-color: #f2f2f2;
+  color: #000;
+}
+
+/* Modifica lo sfondo del saldo punti */
+.saldo-punti-table td {
+  background-color: #fff;
+  color: #000;
+}
+
+/* Personalizzazione dei colori */
+.mio-plugin-wrapper {
+  --sfondo-tabella-voci: #fff;
+  --colore-testo-tabella-voci: #000;
+  --sfondo-tabella-saldo-punti: #f2f2f2;
+  --colore-testo-tabella-saldo-punti: #000;
+}
+
+/* Stili per la tabella delle voci personalizzata */
+.mio-plugin-wrapper .gettoni-voci-table {
+  background-color: var(--sfondo-tabella-voci);
+}
+
+.mio-plugin-wrapper .gettoni-voci-table th,
+.mio-plugin-wrapper .gettoni-voci-table td {
+  color: var(--colore-testo-tabella-voci);
+}
+
+/* Stili per la tabella del saldo punti personalizzata */
+.mio-plugin-wrapper .saldo-punti-table {
+  background-color: var(--sfondo-tabella-saldo-punti);
+}
+
+.mio-plugin-wrapper .saldo-punti-table th,
+.mio-plugin-wrapper .saldo-punti-table td {
+  color: var(--colore-testo-tabella-saldo-punti);
+}

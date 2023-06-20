@@ -104,11 +104,20 @@ function gettoni_plugin_add_menu() {
 
     add_submenu_page(
         $main_menu_slug, // Slug del menu principale
-        'Voci', // Titolo della sottovoce
-        'Voci', // Etichetta della sottovoce
+        'Aggiungi Voci', // Titolo della sottovoce
+        'Aggiungi Voci', // Etichetta della sottovoce
         'manage_options',
         'gettoni-plugin-voci', // Slug della sottovoce
         'gettoni_plugin_voci_page' // Callback per la pagina
+    );
+
+    add_submenu_page(
+        'gettoni-plugin-menu', // Slug del menu padre
+        'Impostazioni', // Titolo della sottovoce
+        'Impostazioni', // Etichetta della sottovoce
+        'manage_options',
+        'gettoni-plugin-impostazioni', // Slug della sottovoce
+        'gettoni_plugin_impostazioni_page' // Callback per la pagina
     );
 
     add_submenu_page(
@@ -485,9 +494,66 @@ function gettoni_plugin_voci_shortcode() {
     $output .= '</tbody>';
     $output .= '</table>';
 
+     // Aggiungi la tabella del saldo punti per l'utente corrente
+     $current_user_id = get_current_user_id();
+     $user_gettone = get_user_meta($current_user_id, 'gettone', true);
+ 
+     $output .= '<h2>Saldo Punti</h2>';
+     $output .= '<table class="wp-list-table saldo-punti-table">';
+     $output .= '<thead><tr><th>Utente</th><th>Saldo Punti</th></tr></thead>';
+     $output .= '<tbody>';
+     $output .= '<tr>';
+     $output .= '<td>' . get_userdata($current_user_id)->user_login . '</td>';
+     $output .= '<td>' . $user_gettone . '</td>';
+     $output .= '</tr>';
+     $output .= '</tbody>';
+     $output .= '</table>';
+
     return $output;
 }
 add_shortcode('gettoni_voci', 'gettoni_plugin_voci_shortcode');
+
+// Callback per la pagina delle impostazioni
+function gettoni_plugin_impostazioni_page() {
+    // Verifica se l'utente ha i permessi necessari
+    if (!current_user_can('manage_options')) {
+        return;
+    }
+
+    // Recupera il valore attuale delle impostazioni (ID della pagina)
+    $success_page_id = get_option('gettoni_success_page_id');
+
+    // Salva le impostazioni quando il modulo viene inviato
+    if (isset($_POST['save_settings'])) {
+        // Verifica se è stato fornito un ID di pagina valido
+        $success_page_id = isset($_POST['success_page_id']) ? absint($_POST['success_page_id']) : 0;
+
+        // Salva il valore delle impostazioni
+        update_option('gettoni_success_page_id', $success_page_id);
+
+        // Messaggio di successo
+        echo '<div class="notice notice-success is-dismissible">';
+        echo '<p>Impostazioni salvate con successo!</p>';
+        echo '</div>';
+    }
+    ?>
+
+    <div class="wrap">
+        <h1>Impostazioni Gettoni</h1>
+
+        <form method="POST">
+            <label for="success_page_id">Pagina di successo:</label>
+            <input type="number" name="success_page_id" id="success_page_id" value="<?php echo $success_page_id; ?>">
+
+            <p class="description">Inserisci l'ID della pagina in cui verrà visualizzato il messaggio di successo quando un utente prende un lavoro con successo.</p>
+
+            <button type="submit" name="save_settings" class="button button-primary">Salva Impostazioni</button>
+        </form>
+    </div>
+
+    <?php
+}
+
 
 // Azione per il prendi lavoro
 add_action('init', 'gettoni_plugin_prende_lavoro');
@@ -505,9 +571,8 @@ function gettoni_plugin_prende_lavoro()
 
         $voce = $wpdb->get_row($wpdb->prepare("SELECT * FROM $table_name_voci WHERE id = %d", $voce_id));
         $voce_quantita = $voce->quantita;
-        $voce_quantita = $voce->quantita;
 
-        if ($user_gettone > 0 && $voce_quantita > 0 && $voce_quantita > 0) {
+        if ($user_gettone > 0 && $voce_quantita > 0) {
             // Inizia una transazione per garantire l'integrità dei dati
             $wpdb->query('START TRANSACTION');
 
@@ -564,8 +629,8 @@ function gettoni_plugin_prende_lavoro()
                 // Esegui altre operazioni desiderate
                 // ...
 
-                // Redirect o messaggio di successo
-                wp_redirect(home_url());
+                // Ricarica la pagina corrente con i numeri aggiornati
+                wp_redirect($_SERVER['REQUEST_URI']);
                 exit;
             } catch (Exception $e) {
                 // Annulla la transazione in caso di errore
@@ -580,3 +645,10 @@ function gettoni_plugin_prende_lavoro()
         }
     }
 }
+
+
+// Aggiungi il file CSS per abbellire le tabelle
+function gettoni_plugin_enqueue_styles() {
+    wp_enqueue_style( 'gettoni-plugin-styles', plugin_dir_url( __FILE__ ) . 'css/gettoni-plugin.css' );
+}
+add_action( 'wp_enqueue_scripts', 'gettoni_plugin_enqueue_styles' );
