@@ -29,7 +29,6 @@ function gettoni_plugin_activate() {
         lavoro varchar(255) NOT NULL,
         referenza varchar(255) NOT NULL,
         quantita int(11) NOT NULL,
-        quantita_disponibile int(11) NOT NULL,
         user_id int(11) NOT NULL DEFAULT 0,
         count int(11) NOT NULL DEFAULT 0,
         PRIMARY KEY  (id)
@@ -84,16 +83,20 @@ function gettoni_plugin_add_menu() {
         'gettoni-plugin-voci', // Slug della sottovoce
         'gettoni_plugin_voci_page' // Callback per la pagina
     );
+
 }
 
 // Callback per la pagina di dashboard
 function gettoni_plugin_dashboard_page() {
+    global $wpdb;
+    $table_name = $wpdb->prefix . 'gettoni_voci';
+
     $users = get_users();
 
     echo '<div class="wrap">';
     echo '<h1>Dashboard</h1>';
     echo '<table class="wp-list-table widefat fixed striped">';
-    echo '<thead><tr><th>Nome Utente</th><th>Gettone</th><th>Lavori Presi</th></tr></thead>';
+    echo '<thead><tr><th>Nome Utente</th><th>Gettone</th></tr></thead>';
     echo '<tbody>';
 
     foreach ($users as $user) {
@@ -103,21 +106,35 @@ function gettoni_plugin_dashboard_page() {
             echo '<tr>';
             echo '<td>' . $user->user_login . '</td>';
             echo '<td>' . $gettone . '</td>';
-            // Recupera i lavori presi dall'utente corrente
-            global $wpdb;
-            $table_name = $wpdb->prefix . 'gettoni_voci';
-            $taken_jobs = $wpdb->get_results($wpdb->prepare("SELECT * FROM $table_name WHERE user_id = %d", $user->ID));
+            echo '</tr>';
+        }
+    }
 
-            echo '<td>';
-            if ($taken_jobs) {
-                foreach ($taken_jobs as $job) {
-                    echo $job->lavoro . '<br>';
-                }
-            } else {
-                echo 'Nessun lavoro preso';
+    echo '</tbody>';
+    echo '</table>';
+
+    echo '<h2>Lavori Presi</h2>';
+    echo '<table class="wp-list-table widefat fixed striped">';
+    echo '<thead><tr><th>Nome Utente</th><th>Lavoro</th><th>Quantità</th></tr></thead>';
+    echo '<tbody>';
+
+    foreach ($users as $user) {
+        $user_id = $user->ID;
+
+        $taken_jobs = $wpdb->get_results($wpdb->prepare("SELECT * FROM $table_name WHERE user_id = %d", $user_id));
+
+        if ($taken_jobs) {
+            foreach ($taken_jobs as $job) {
+                echo '<tr>';
+                echo '<td>' . $user->user_login . '</td>';
+                echo '<td>' . $job->lavoro . '</td>';
+                echo '<td>' . $job->count . '</td>';
+                echo '</tr>';
             }
-            echo '</td>';
-
+        } else {
+            echo '<tr>';
+            echo '<td>' . $user->user_login . '</td>';
+            echo '<td colspan="2">Nessun lavoro preso</td>';
             echo '</tr>';
         }
     }
@@ -195,6 +212,7 @@ function gettoni_plugin_voci_page() {
                 'lavoro' => $lavoro,
                 'referenza' => $referenza,
                 'quantita' => $quantita,
+                'quantita' => $quantita,
             ),
             array('%s', '%s', '%d', '%d')
         );
@@ -218,6 +236,7 @@ function gettoni_plugin_voci_page() {
             array(
                 'lavoro' => $lavoro,
                 'referenza' => $referenza,
+                'quantita' => $quantita,
                 'quantita' => $quantita,
             ),
             array('id' => $voce_id),
@@ -300,6 +319,45 @@ function gettoni_plugin_voci_page() {
     <?php
 }
 
+// Callback per la pagina dei lavori presi
+function gettoni_plugin_lavori_presi_page() {
+    global $wpdb;
+    $table_name = $wpdb->prefix . 'gettoni_voci';
+
+    $users = get_users();
+
+    echo '<div class="wrap">';
+    echo '<h1>Lavori Presi</h1>';
+    echo '<table class="wp-list-table widefat fixed striped">';
+    echo '<thead><tr><th>Nome Utente</th><th>Lavoro</th><th>Quantità</th></tr></thead>';
+    echo '<tbody>';
+
+    foreach ($users as $user) {
+        $user_id = $user->ID;
+
+        $taken_jobs = $wpdb->get_results($wpdb->prepare("SELECT * FROM $table_name WHERE user_id = %d", $user_id));
+
+        if ($taken_jobs) {
+            foreach ($taken_jobs as $job) {
+                echo '<tr>';
+                echo '<td>' . $user->user_login . '</td>';
+                echo '<td>' . $job->lavoro . '</td>';
+                echo '<td>' . $job->count . '</td>';
+                echo '</tr>';
+            }
+        } else {
+            echo '<tr>';
+            echo '<td>' . $user->user_login . '</td>';
+            echo '<td colspan="2">Nessun lavoro preso</td>';
+            echo '</tr>';
+        }
+    }
+
+    echo '</tbody>';
+    echo '</table>';
+    echo '</div>';
+}
+
 // Funzione per generare l'output dello shortcode
 function gettoni_plugin_voci_shortcode() {
     global $wpdb;
@@ -360,7 +418,7 @@ function gettoni_plugin_prende_lavoro() {
         $voce_quantita = $voce->quantita;
         $voce_user_id = $voce->user_id;
 
-        if ($user_gettone > 0 && $voce_quantita > 0) {
+        if ($user_gettone > 0 && $voce_quantita > 0 && $voce_quantita > 0) {
             // Aggiorna il numero di gettoni dell'utente
             $new_user_gettone = $user_gettone - 1;
             update_user_meta($current_user_id, 'gettone', $new_user_gettone);
