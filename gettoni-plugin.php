@@ -110,6 +110,15 @@ function gettoni_plugin_add_menu() {
         'gettoni-plugin-voci', // Slug della sottovoce
         'gettoni_plugin_voci_page' // Callback per la pagina
     );
+
+    add_submenu_page(
+        $main_menu_slug, // Slug del menu principale
+        'Info', // Titolo della sottovoce
+        'Info', // Etichetta della sottovoce
+        'manage_options',
+        'gettoni-plugin-info', // Slug della sottovoce
+        'gettoni_plugin_info_page' // Callback per la pagina
+    );
 }
 
 
@@ -230,6 +239,35 @@ function gettoni_plugin_add_gettoni_page() {
             <button type="submit" name="add_gettoni">Aggiungi</button>
             <button type="submit" name="subtract_gettoni">Sottrai</button>
         </form>
+    </div>
+    <?php
+}
+
+// Callback per la pagina di info
+function gettoni_plugin_info_page() {
+    ?>
+    <div class="wrap">
+        <h1>Informazioni sul Plugin Gettoni</h1>
+        
+        <h2>Descrizione</h2>
+        <p>Il plugin Gettoni consente di gestire i gettoni degli utenti e tenere traccia dei lavori presi.</p>
+        
+        <h2>Utilizzo dello Shortcode</h2>
+        <p>Puoi utilizzare lo shortcode [gettoni_voci] per visualizzare la tabella delle voci del plugin nei tuoi contenuti. Puoi inserire lo shortcode in qualsiasi pagina o articolo.</p>
+        <p>Lo shortcode mostrerà una tabella con i dettagli delle voci disponibili, inclusi il lavoro, la referenza e la quantità.</p>
+        <p>Esempio: [gettoni_voci]</p>
+        
+        <h2>Aggiunta e Rimozione Gettoni</h2>
+        <p>Nella pagina "Aggiungi Gettoni" puoi assegnare o sottrarre gettoni agli utenti. Seleziona l'utente desiderato, specifica la quantità di gettoni da aggiungere o sottrarre e fai clic sul pulsante corrispondente.</p>
+        
+        <h2>Gestione delle Voci</h2>
+        <p>Nella pagina "Voci" puoi aggiungere, modificare o eliminare le voci disponibili. Puoi specificare il nome del lavoro, la referenza e la quantità disponibile per ciascuna voce.</p>
+        
+        <h2>Lavori Presi dagli Utenti</h2>
+        <p>Nella pagina "Lavori Presi" puoi vedere i lavori presi dagli utenti e il numero di volte in cui sono stati presi. La tabella mostrerà il nome dell'utente, il lavoro preso e la quantità.</p>
+        
+        <h2>Assistenza</h2>
+        <p>Se hai domande o incontri problemi nell'utilizzo del plugin, puoi contattare il nostro team di supporto all'indirizzo support@gettoni-plugin.com.</p>
     </div>
     <?php
 }
