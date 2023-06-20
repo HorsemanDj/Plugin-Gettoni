@@ -186,12 +186,7 @@ function gettoni_plugin_dashboard_page() {
                 echo '<td>' . $job->count . '</td>';
                 echo '</tr>';
             }
-        } else {
-            echo '<tr>';
-            echo '<td>' . $user->user_login . '</td>';
-            echo '<td colspan="3">Nessun lavoro preso</td>';
-            echo '</tr>';
-        }
+        } 
     }
 
     echo '</tbody>';
@@ -441,11 +436,6 @@ function gettoni_plugin_lavori_presi_page()
                 echo '<td>' . $job->count . '</td>';
                 echo '</tr>';
             }
-        } else {
-            echo '<tr>';
-            echo '<td>' . $user->user_login . '</td>';
-            echo '<td colspan="2">Nessun lavoro preso</td>';
-            echo '</tr>';
         }
     }
 
