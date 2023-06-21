@@ -48,6 +48,8 @@ This license prohibits the resale of the plugin or the creation of derivative wo
 For questions, suggestions, or bug reports, please contact the author at info@riccardigaetano.it.
 
 ## 
+## 
+## 
 
 
 # Gettoni Plugin
