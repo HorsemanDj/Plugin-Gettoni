@@ -39,9 +39,14 @@ You can use the shortcode `[gettoni_voci]` to display the plugin's entries table
 
 ## License
 
-The Gettoni Plugin is released under the Creative Commons Attribution-NonCommercial-NoDerivatives 4.0 International (CC BY-NC-ND 4.0) license.
-
-This license prohibits the resale of the plugin or the creation of derivative works without the author's consent. The use of the plugin is only allowed for non-commercial purposes. For further information about the license, please read the LICENSE.md file.
+Copyright (c) 2023, Riccardi Gaetano.
+All rights reserved.
+The Gettoni Plugin is proprietary software.
+Any reuse, copying, modification, or distribution of this software without the explicit written permission of the author is strictly prohibited.
+The software is provided "as is", without any warranty, express or implied, including but not limited to warranties of merchantability, fitness for a particular purpose, and non-infringement.
+In no event shall the author or copyright holders be liable for any claim, damages, or other liability, whether in an action of contract, tort, or otherwise, arising from, out of, or in connection with the software or the use or other dealings in the software.
+To obtain permission to use the software beyond the limits of this license, please contact Riccardi Gaetano at info@riccardigaetano.it.
+For further information about the license, please read the LICENSE.md file.
 
 ## Contact
 
@@ -89,9 +94,13 @@ Puoi utilizzare lo shortcode `[gettoni_voci]` per visualizzare la tabella delle 
 
 ## Licenza
 
-Il Gettoni Plugin è rilasciato con licenza Creative Commons Attribution-NonCommercial-NoDerivatives 4.0 International (CC BY-NC-ND 4.0).
-
-Questa licenza vieta la rivendita del plugin o la creazione di opere derivate senza il consenso dell'autore. L'uso del plugin è consentito solo per scopi non commerciali. Per ulteriori informazioni sulla licenza, leggere il file LICENSE.md.
+Copyright (c) 2023, Riccardi Gaetano.
+Tutti i diritti sono riservati.
+Il Gettoni Plugin è un software proprietario.
+È severamente proibito il riutilizzo, la copia, la modifica o la distribuzione di questo software senza il permesso scritto e esplicito dell'autore.
+Il software è fornito "così com'è", senza alcuna garanzia, esplicita o implicita, inclusa, ma non limitata a, garanzie di commerciabilità, idoneità per uno scopo specifico e non violazione.
+In nessun caso l'autore o i titolari del copyright saranno responsabili per qualsiasi reclamo, danni o altre responsabilità, sia in un'azione di contratto, responsabilità civile o altro, derivante da, fuori o in connessione con il software o l'uso o altre operazioni nel software.
+Per ottenere il permesso di utilizzare il software oltre i limiti di questa licenza, si prega di contattare Riccardi Gaetano a info@riccardigaetano.it. Per ulteriori informazioni sulla licenza, leggere il file LICENSE.md.
 
 ## Contatti
 
