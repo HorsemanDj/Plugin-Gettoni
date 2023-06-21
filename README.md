@@ -39,13 +39,23 @@ You can use the shortcode `[gettoni_voci]` to display the plugin's entries table
 
 ## License
 
+# License
+
 Copyright (c) 2023, Riccardi Gaetano.
+
 All rights reserved.
+
 The Gettoni Plugin is proprietary software.
+
 Any reuse, copying, modification, or distribution of this software without the explicit written permission of the author is strictly prohibited.
+
 The software is provided "as is", without any warranty, express or implied, including but not limited to warranties of merchantability, fitness for a particular purpose, and non-infringement.
+
 In no event shall the author or copyright holders be liable for any claim, damages, or other liability, whether in an action of contract, tort, or otherwise, arising from, out of, or in connection with the software or the use or other dealings in the software.
+
 To obtain permission to use the software beyond the limits of this license, please contact Riccardi Gaetano at info@riccardigaetano.it.
+Please read the LICENSE.md file.
+
 For further information about the license, please read the LICENSE.md file.
 
 ## Contact
