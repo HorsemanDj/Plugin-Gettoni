@@ -1,3 +1,5 @@
+/
+
 <?php
 /*
 Plugin Name: Gettoni Plugin
@@ -6,7 +8,23 @@ Description: Gestione gettoni utente
 Version: 1
 Author: Riccardi Gaetano
 Author URI: https://www.riccardigaetano.it
-License: GPL2
+
+Licenza:
+
+Copyright (c) 2023, Riccardi Gaetano
+
+Tutti i diritti sono riservati.
+
+Il Gettoni Plugin è un software proprietario.
+
+È severamente proibito il riutilizzo, la copia, la modifica o la distribuzione di questo software senza il permesso scritto e esplicito dell'autore.
+
+Il software è fornito "così com'è", senza alcuna garanzia, esplicita o implicita, inclusa, ma non limitata a, garanzie di commerciabilità, idoneità per uno scopo specifico e non violazione.
+
+In nessun caso l'autore o i titolari del copyright saranno responsabili per qualsiasi reclamo, danni o altre responsabilità, sia in un'azione di contratto, responsabilità civile o altro, derivante da, fuori o in connessione con il software o l'uso o altre operazioni nel software.
+
+Per ottenere il permesso di utilizzare il software oltre i limiti di questa licenza, si prega di contattare Riccardi Gaetano a info@riccardigaetano.it.
+
 */
 
 /// Azione all'attivazione del plugin

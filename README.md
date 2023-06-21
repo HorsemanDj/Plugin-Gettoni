@@ -1,3 +1,55 @@
+
+##[ENG][IT]
+
+
+# Gettoni Plugin
+
+The Gettoni Plugin is a WordPress plugin that allows you to manage users' tokens and keep track of jobs taken.
+
+## Features
+
+- Assign and subtract tokens to users
+- Add, modify, and delete available entries
+- Keep track of jobs taken by users
+
+## Installation
+
+1. Download the ZIP file of the plugin from the GitHub repository.
+2. Log into your WordPress site as an administrator.
+3. Go to the "Plugins" page in the WordPress admin panel.
+4. Upload the plugin ZIP file using the "Upload Plugin" button.
+5. Activate the plugin.
+
+## Usage
+
+The plugin adds a "Tokens" menu in the WordPress admin panel with the following pages:
+
+- **Dashboard**: displays a summary of user tokens and jobs taken.
+- **Add Tokens**: assign or subtract tokens to users.
+- **Add Entries**: add, modify, or delete the available entries.
+- **Jobs Taken**: display the jobs taken by users.
+- **Settings**: set the success page for taking a job.
+- **Info**: provides information about the plugin.
+
+You can use the shortcode `[gettoni_voci]` to display the plugin's entries table on your pages or posts.
+
+## Requirements
+
+- WordPress 5.0 or later
+
+## License
+
+The Gettoni Plugin is released under the Creative Commons Attribution-NonCommercial-NoDerivatives 4.0 International (CC BY-NC-ND 4.0) license.
+
+This license prohibits the resale of the plugin or the creation of derivative works without the author's consent. The use of the plugin is only allowed for non-commercial purposes. For further information about the license, please read the LICENSE.md file.
+
+## Contact
+
+For questions, suggestions, or bug reports, please contact the author at info@riccardigaetano.it.
+
+
+
+
 # Gettoni Plugin
 
 Il Gettoni Plugin è un plugin WordPress che consente di gestire i gettoni degli utenti e tenere traccia dei lavori presi.
@@ -42,3 +94,6 @@ Questa licenza vieta la rivendita del plugin o la creazione di opere derivate se
 ## Contatti
 
 Per domande, suggerimenti o segnalazioni di bug, contattare l'autore all'indirizzo info@riccardigaetano.it
+
+
+
